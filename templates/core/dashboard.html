@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+            <p class="text-muted">Welcome back, {{ user.username }}! This is your personal dashboard.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Stats Cards -->
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Your Posts</h6>
+                            <h2 class="mb-0">{{ user.posts.count }}</h2>
+                        </div>
+                        <i class="fas fa-pen fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Published</h6>
+                            <h2 class="mb-0">{{ user.posts.published.count }}</h2>
+                        </div>
+                        <i class="fas fa-globe fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Drafts</h6>
+                            <h2 class="mb-0">{{ user.posts.draft.count }}</h2>
+                        </div>
+                        <i class="fas fa-file fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Total Views</h6>
+                            <h2 class="mb-0">{{ total_views|default:"0" }}</h2>
+                        </div>
+                        <i class="fas fa-eye fa-3x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-clock"></i> Your Recent Posts</h5>
+                </div>
+                <div class="card-body">
+                    {% with recent_posts=user.posts.all|slice:":5" %}
+                        {% if recent_posts %}
+                            <ul class="list-group list-group-flush">
+                                {% for post in recent_posts %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <a href="{{ post.get_absolute_url }}">{{ post.title|truncatechars:30 }}</a>
+                                    <span class="badge {% if post.status == 'published' %}bg-success{% else %}bg-warning{% endif %}">
+                                        {{ post.status }}
+                                    </span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted text-center">You haven't created any posts yet.</p>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-cog"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'accounts:profile' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-user"></i> View Profile
+                        </a>
+                        <a href="{% url 'accounts:profile_edit' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </a>
+                        <a href="{% url 'posts:post_create' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-pen"></i> Create New Post
+                        </a>
+                        <a href="{% url 'posts:my_posts' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-list"></i> View My Posts
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

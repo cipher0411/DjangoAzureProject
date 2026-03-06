@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}About - Django Auth App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-info-circle"></i> About This App</h4>
+                </div>
+                <div class="card-body">
+                    <h5>Django Authentication Web App</h5>
+                    <p>This is a complete authentication system built with Django, featuring:</p>
+                    <ul>
+                        <li>User Registration with email validation</li>
+                        <li>Secure Login/Logout functionality</li>
+                        <li>User Profile management</li>
+                        <li>Profile picture upload</li>
+                        <li>Protected dashboard for authenticated users</li>
+                        <li>Responsive design with Bootstrap 5</li>
+                        <li>PostgreSQL database ready for Azure deployment</li>
+                    </ul>
+
+                    <h5 class="mt-4">Technologies Used</h5>
+                    <ul>
+                        <li>Django 4.2 - Python Web Framework</li>
+                        <li>Bootstrap 5 - Frontend Framework</li>
+                        <li>PostgreSQL - Database</li>
+                        <li>Azure App Service - Hosting</li>
+                    </ul>
+
+                    <h5 class="mt-4">Features Demonstrated</h5>
+                    <ul>
+                        <li>User authentication system</li>
+                        <li>One-to-one relationship for user profiles</li>
+                        <li>File upload for profile pictures</li>
+                        <li>Form validation and error handling</li>
+                        <li>Message framework for user notifications</li>
+                        <li>Template inheritance and reusable components</li>
+                    </ul>
+
+                    <div class="alert alert-info mt-4">
+                        <i class="fas fa-cloud"></i>
+                        <strong>Ready for Azure:</strong> This app is configured with environment variables and ready to be deployed to Azure App Service with PostgreSQL database.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

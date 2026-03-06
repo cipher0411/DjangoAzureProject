@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blog Posts{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1><i class="fas fa-blog"></i> Blog Posts</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            {% if user.is_authenticated %}
+            <a href="{% url 'posts:post_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create New Post
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <form method="get" class="d-flex">
+                <input type="text" name="q" class="form-control me-2" placeholder="Search posts..." value="{{ query }}">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" id="categoryFilter" onchange="window.location.href=this.value">
+                <option value="{% url 'posts:post_list' %}">All Categories</option>
+                {% for category in categories %}
+                <option value="{% url 'posts:category_posts' category.slug %}" {% if request.GET.category == category.slug %}selected{% endif %}>
+                    {{ category.name }} ({{ category.post_count }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Posts Grid -->
+    <div class="row g-4">
+        {% for post in page_obj %}
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" class="card-img-top" alt="{{ post.title }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="fas fa-image fa-3x"></i>
+                </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text text-muted">{{ post.summary|truncatechars:100 }}</p>
+                    
+                    <div class="mb-2">
+                        <span class="badge bg-primary">{{ post.category.name|default:"Uncategorized" }}</span>
+                        <span class="badge bg-secondary">
+                            <i class="fas fa-eye"></i> {{ post.views }}
+                        </span>
+                        <span class="badge bg-danger">
+                            <i class="fas fa-heart"></i> {{ post.total_likes }}
+                        </span>
+                    </div>
+                    
+                    <p class="small text-muted mb-2">
+                        <i class="fas fa-user"></i> {{ post.author.username }} |
+                        <i class="fas fa-calendar"></i> {{ post.published_at|date:"M d, Y" }}
+                    </p>
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <a href="{{ post.get_absolute_url }}" class="btn btn-outline-primary btn-sm w-100">
+                        Read More <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i> No posts found.
+                {% if user.is_authenticated %}
+                <a href="{% url 'posts:post_create' %}">Create the first post!</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}">
+                    <i class="fas fa-angle-double-left"></i>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

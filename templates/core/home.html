@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Django Auth App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row align-items-center py-5">
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold">Welcome to Django Auth App</h1>
+            <p class="lead">A complete authentication system built with Django featuring login, registration, and user profiles.</p>
+            <hr class="my-4">
+            <p>Total Users: <strong>{{ total_users }}</strong></p>
+            {% if not user.is_authenticated %}
+            <div class="mt-4">
+                <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg me-2">
+                    <i class="fas fa-user-plus"></i> Get Started
+                </a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+            </div>
+            {% else %}
+            <div class="mt-4">
+                <a href="{% url 'core:dashboard' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-6">
+            <img src="https://via.placeholder.com/600x400?text=Django+Auth+App" class="img-fluid rounded shadow" alt="Hero Image">
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row g-4 py-5">
+        <h2 class="text-center mb-4">Features</h2>
+        
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">User Registration</h5>
+                    <p class="card-text">New users can create accounts with email validation and secure password requirements.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-sign-in-alt fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Secure Login</h5>
+                    <p class="card-text">Registered users can log in securely to access protected content and features.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-id-card fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">User Profiles</h5>
+                    <p class="card-text">Each user has a customizable profile with bio, location, and profile picture.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

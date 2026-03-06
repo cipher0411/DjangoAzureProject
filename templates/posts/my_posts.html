@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}My Posts{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1><i class="fas fa-pen"></i> My Posts</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'posts:post_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create New Post
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link {% if not current_status %}active{% endif %}" href="{% url 'posts:my_posts' %}">
+                All
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if current_status == 'published' %}active{% endif %}" href="?status=published">
+                Published
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if current_status == 'draft' %}active{% endif %}" href="?status=draft">
+                Drafts
+            </a>
+        </li>
+    </ul>
+
+    <!-- Posts Table -->
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Views</th>
+                            <th>Likes</th>
+                            <th>Created</th>
+                            <th>Published</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in posts %}
+                        <tr>
+                            <td>
+                                <a href="{{ post.get_absolute_url }}">{{ post.title|truncatechars:30 }}</a>
+                            </td>
+                            <td>{{ post.category.name|default:"-" }}</td>
+                            <td>
+                                {% if post.status == 'published' %}
+                                <span class="badge bg-success">Published</span>
+                                {% else %}
+                                <span class="badge bg-warning">Draft</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ post.views }}</td>
+                            <td>{{ post.total_likes }}</td>
+                            <td>{{ post.created_at|date:"M d, Y" }}</td>
+                            <td>{{ post.published_at|date:"M d, Y"|default:"-" }}</td>
+                            <td>
+                                <a href="{% url 'posts:post_edit' post.pk %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ post.pk }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Delete Modal for each post -->
+                        <div class="modal fade" id="deleteModal{{ post.pk }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Delete Post</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to delete "{{ post.title }}"? This action cannot be undone.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <form method="post" action="{% url 'posts:post_delete' post.pk %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">
+                                <div class="alert alert-info mb-0">
+                                    <i class="fas fa-info-circle"></i> No posts found.
+                                    <a href="{% url 'posts:post_create' %}">Create your first post!</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
